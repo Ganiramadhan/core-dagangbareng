@@ -18,7 +18,6 @@ import {
 } from '@nestjs/swagger';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { SsoLoginDto } from './dto/sso-login.dto';
 import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Auth')
@@ -50,14 +49,21 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Invalid email or password' })
   async login(@Body() body: LoginDto) {
     const user = await this.authService.findByEmail(body.email);
-    if (!user || !(await this.authService.comparePassword(body.password, user.password))) {
+    if (
+      !user ||
+      !(await this.authService.comparePassword(body.password, user.password))
+    ) {
       throw new UnauthorizedException('Invalid email or password');
     }
 
     const payload = { sub: user.id, email: user.email };
     const token = await this.jwtService.signAsync(payload);
 
-    const { password, ...userData } = user;
+    const userData = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    };
 
     return {
       user: {
@@ -85,45 +91,6 @@ export class AuthController {
     }
 
     return this.authService.register(body);
-  }
-
-  @Post('login/sso')
-  @ApiOperation({ summary: 'Login via SSO and get access token' })
-  @ApiBody({ type: SsoLoginDto })
-  @ApiResponse({
-    status: 200,
-    description: 'SSO Login success',
-    schema: {
-      example: {
-        user: {
-          id: 2,
-          email: 'sso@example.com',
-          name: 'Jane SSO',
-          createdAt: '2025-06-23T13:00:00.000Z',
-          access_token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
-        },
-      },
-    },
-  })
-  @ApiResponse({ status: 401, description: 'Invalid SSO token' })
-  async loginSSO(@Body() body: SsoLoginDto) {
-    const ssoUser = await this.authService.validateSsoToken(body.provider, body.token);
-
-    if (!ssoUser) {
-      throw new UnauthorizedException('Invalid SSO token');
-    }
-
-    const payload = { sub: ssoUser.id, email: ssoUser.email };
-    const token = await this.jwtService.signAsync(payload);
-
-    const { password, ...userData } = ssoUser;
-
-    return {
-      user: {
-        ...userData,
-        access_token: token,
-      },
-    };
   }
 
   @Get('users')
