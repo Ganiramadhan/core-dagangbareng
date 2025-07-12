@@ -27,6 +27,14 @@ export class ProductApiController {
     return this.productService.findAll();
   }
 
+  @Get(':id')
+  @ApiOperation({ summary: 'Get product by ID' })
+  @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({ status: 200, description: 'Product found' })
+  getProduct(@Param('id', ParseIntPipe) id: number): Promise<Product> {
+    return this.productService.findOne(id);
+  }
+
   @Post()
   @ApiOperation({ summary: 'Create a new product' })
   @ApiResponse({ status: 201, description: 'Product successfully created.' })
@@ -36,8 +44,8 @@ export class ProductApiController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Update an existing product' })
-  @ApiResponse({ status: 200, description: 'Product successfully updated.' })
   @ApiParam({ name: 'id', type: Number })
+  @ApiResponse({ status: 200, description: 'Product successfully updated.' })
   updateProduct(
     @Param('id', ParseIntPipe) id: number,
     @Body() dto: UpdateProductDto,
@@ -46,11 +54,19 @@ export class ProductApiController {
   }
 
   @Delete(':id')
-  @HttpCode(204)
+  @HttpCode(200)
   @ApiOperation({ summary: 'Delete a product by ID' })
-  @ApiResponse({ status: 204, description: 'Product successfully deleted.' })
   @ApiParam({ name: 'id', type: Number })
-  deleteProduct(@Param('id', ParseIntPipe) id: number) {
+  @ApiResponse({
+    status: 200,
+    description: 'Product successfully deleted.',
+    schema: {
+      example: { message: 'Product deleted successfully' },
+    },
+  })
+  async deleteProduct(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
     return this.productService.deleteProduct(id);
   }
 }

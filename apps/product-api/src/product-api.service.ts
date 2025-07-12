@@ -16,17 +16,24 @@ export class ProductApiService {
     return this.productRepository.find();
   }
 
+  async findOne(id: number): Promise<Product> {
+    const product = await this.productRepository.findOneBy({ id });
+    if (!product) {
+      throw new NotFoundException(`Product with ID ${id} not found`);
+    }
+    return product;
+  }
+
   async createProduct(createProductDto: CreateProductDto): Promise<Product> {
     const product = this.productRepository.create(createProductDto);
     return this.productRepository.save(product);
   }
 
-  async updateProduct(id: number, updateDto: UpdateProductDto): Promise<Product> {
-    const product = await this.productRepository.findOneBy({ id });
-    if (!product) {
-      throw new NotFoundException(`Product with ID ${id} not found`);
-    }
-
+  async updateProduct(
+    id: number,
+    updateDto: UpdateProductDto,
+  ): Promise<Product> {
+    const product = await this.findOne(id);
     const updatedProduct = this.productRepository.merge(product, updateDto);
     return this.productRepository.save(updatedProduct);
   }

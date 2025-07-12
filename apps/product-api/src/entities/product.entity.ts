@@ -1,9 +1,17 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
 
 @Entity({ name: 'products' })
 export class Product {
   @PrimaryGeneratedColumn()
   id: number;
+
+  @Column({ name: 'shop_id', type: 'int', nullable: false })
+  shopId: number;
 
   @Column({ type: 'varchar', length: 255, nullable: false })
   name: string;
@@ -14,6 +22,19 @@ export class Product {
   @Column({ type: 'decimal', precision: 10, scale: 2, nullable: false })
   price: number;
 
-  @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  @Column({ type: 'int', nullable: false })
+  stock: number;
+
+  @Column({ name: 'image_url', type: 'varchar', length: 500, nullable: true })
+  imageUrl?: string;
+
+  @Column({ name: 'is_active', type: 'boolean', default: true })
+  isActive: boolean;
+
+  @CreateDateColumn({
+    type: 'timestamp',
+    name: 'created_at',
+    default: () => 'CURRENT_TIMESTAMP',
+  })
   createdAt: Date;
 }
