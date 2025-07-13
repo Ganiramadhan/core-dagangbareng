@@ -1,7 +1,18 @@
 import * as dotenv from 'dotenv';
 import { resolve } from 'path';
 import { existsSync } from 'fs';
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ProductApiController } from './product-api.controller';
+import { ProductApiService } from './product-api.service';
+import { Product } from './entities/product.entity';
+import { TypeOrmCustomLogger } from './logger';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from '../../auth-api/src/jwt.strategy';
 
+// 🌱 Setup .env path
 const envPath = resolve(
   process.cwd(),
   'apps',
@@ -9,7 +20,7 @@ const envPath = resolve(
   'src',
   'common',
   'envs',
-  `${process.env.NODE_ENV || 'development'}.env`
+  `${process.env.NODE_ENV || 'development'}.env`,
 );
 
 if (existsSync(envPath)) {
@@ -19,21 +30,24 @@ if (existsSync(envPath)) {
   console.error(`❌ ENV file not found at: ${envPath}`);
 }
 
-import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { ProductApiController } from './product-api.controller';
-import { ProductApiService } from './product-api.service';
-import { Product } from './entities/product.entity';
-import { TypeOrmCustomLogger } from './logger';
-
 @Module({
   imports: [
+    // ✅ Load env as global config
     ConfigModule.forRoot({
       envFilePath: envPath,
       isGlobal: true,
     }),
 
+    // ✅ Passport & JWT
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: {
+        expiresIn: process.env.JWT_EXPIRES_IN || '1d',
+      },
+    }),
+
+    // ✅ Database connection
     TypeOrmModule.forRootAsync({
       useFactory: () => ({
         type: 'postgres',
@@ -45,15 +59,18 @@ import { TypeOrmCustomLogger } from './logger';
         entities: [Product],
         autoLoadEntities: true,
         synchronize: false,
-        logging: true, 
-        logger: new TypeOrmCustomLogger(), 
+        logging: process.env.NODE_ENV === 'development',
+        logger:
+          process.env.NODE_ENV === 'development'
+            ? new TypeOrmCustomLogger()
+            : 'advanced-console',
       }),
     }),
 
-    // ✅ Register entitas Product
+    // ✅ Entity registration
     TypeOrmModule.forFeature([Product]),
   ],
   controllers: [ProductApiController],
-  providers: [ProductApiService],
+  providers: [ProductApiService, JwtStrategy],
 })
 export class ProductApiModule {}

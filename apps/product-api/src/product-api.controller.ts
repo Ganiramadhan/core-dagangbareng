@@ -8,12 +8,20 @@ import {
   Body,
   HttpCode,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductApiService } from './product-api.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { Product } from './entities/product.entity';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Products')
 @Controller('products')
@@ -21,7 +29,7 @@ export class ProductApiController {
   constructor(private readonly productService: ProductApiService) {}
 
   @Get()
-  @ApiOperation({ summary: 'Get all products' })
+  @ApiOperation({ summary: 'Get all products (public)' })
   @ApiResponse({ status: 200, description: 'Successfully retrieved products.' })
   getProducts(): Promise<Product[]> {
     return this.productService.findAll();
@@ -36,6 +44,8 @@ export class ProductApiController {
   }
 
   @Post()
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new product' })
   @ApiResponse({ status: 201, description: 'Product successfully created.' })
   createProduct(@Body() dto: CreateProductDto): Promise<Product> {
@@ -43,6 +53,8 @@ export class ProductApiController {
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update an existing product' })
   @ApiParam({ name: 'id', type: Number })
   @ApiResponse({ status: 200, description: 'Product successfully updated.' })
@@ -54,6 +66,8 @@ export class ProductApiController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
   @HttpCode(200)
   @ApiOperation({ summary: 'Delete a product by ID' })
   @ApiParam({ name: 'id', type: Number })
