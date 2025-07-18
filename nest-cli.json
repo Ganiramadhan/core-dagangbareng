@@ -45,6 +45,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/shop-api/tsconfig.app.json"
       }
+    },
+    "order-api": {
+      "type": "application",
+      "root": "apps/order-api",
+      "entryFile": "main",
+      "sourceRoot": "apps/order-api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/order-api/tsconfig.app.json"
+      }
     }
   }
 }
