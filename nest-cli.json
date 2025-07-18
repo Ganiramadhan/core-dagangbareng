@@ -1,4 +1,3 @@
-
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
@@ -36,6 +35,15 @@
       "sourceRoot": "apps/product-api/src",
       "compilerOptions": {
         "tsConfigPath": "apps/product-api/tsconfig.app.json"
+      }
+    },
+    "shop-api": {
+      "type": "application",
+      "root": "apps/shop-api",
+      "entryFile": "main",
+      "sourceRoot": "apps/shop-api/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/shop-api/tsconfig.app.json"
       }
     }
   }
