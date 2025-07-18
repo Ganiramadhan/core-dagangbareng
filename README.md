@@ -1,138 +1,86 @@
+# 🛒 Dagang Bareng Backend - NestJS E-Commerce Starter
 
-# 🚀 NestJS Starter - Clean Architecture & Microservices Ready
-
-A modern NestJS starter boilerplate built with best practices in mind. Ideal for scalable backend applications with support for microservices, Swagger documentation, and developer tooling.
+A clean, scalable, and modular **NestJS backend** boilerplate designed specifically for **Dagang Bareng**, a modern e-commerce platform. This starter includes **TypeORM**, **PostgreSQL**, **JWT Auth**, Swagger API documentation, and built-in microservices support.
 
 ---
 
 ## ✨ Features
 
-- ⚙️ Structured environment variables
-- 📄 Swagger API documentation
-- 🛣️ Short/alias import paths (@/)
-- 🔒 Pre-commit checks using **Husky** + **Lint-Staged**
-- 🧩 Microservices-ready architecture
-- 🔐 Auth module with JWT
-- 🧱 Scalable modular folder structure
-- 🛢️ Support for both **TypeORM** and **Prisma** (choose your ORM)
-- 🔍 **ESLint** for code linting and maintaining code quality
-- 📝 **Conventional Commit** setup for standardized commit messages
-
-## 🛠️ Tech Stack
-
-- **NestJS** - Scalable Node.js framework
-- **TypeORM** - ORM for PostgreSQL
-- **PostgreSQL** - Relational database
-- **JWT** - JSON Web Token for authentication
-- **Swagger** - API documentation
-- **Husky** + **Lint-Staged** - Git hooks for code quality
-- **Dotenv** - Environment configuration
+- ⚙️ Environment configuration with `.env`
+- 📄 Auto-generated Swagger documentation
+- 🛣️ Alias import paths (e.g., `@/shared`)
+- 🔐 JWT-based authentication
+- 🧱 Scalable, modular structure for microservices
+- 🧩 Ready for multi-service architecture (auth, product, order)
+- 🛢️ ORM support using **TypeORM**
+- 🧹 Pre-commit linting and formatting (Husky + Lint-Staged)
+- 📝 Commit enforcement with **Conventional Commits**
 
 ---
 
-## 📁 Folder Structure Highlights
+## 🛠 Tech Stack
+
+- **NestJS** - Scalable Node.js backend framework
+- **TypeORM** - ORM for PostgreSQL
+- **PostgreSQL** - Main database
+- **JWT** - Authentication
+- **Swagger** - API docs
+- **Husky & Lint-Staged** - Git hook tools
+- **Dotenv** - Config management
+
+---
+
+## 📁 Folder Structure
 
 ```
 apps/
 ├── auth-api/
-│   └── src/
-│       ├── common/
-│       ├── config/
-│       ├── dto/
-│       ├── entities/
-│       ├── shared/
-│       ├── main.ts
-│       ├── auth-api.controller.ts
-│       ├── auth-api.service.ts
-│       └── auth-api.module.ts
 ├── product-api/
-│   └── src/
-│       ├── common/
-│       ├── config/
-│       ├── dto/
-│       ├── entities/
-│       ├── shared/
-│       ├── main.ts
-│       ├── product-api.controller.ts
-│       ├── product-api.service.ts
-│       └── product-api.module.ts
+├── order-api/
+└── shop-api/
 ```
+
+Each API is its own microservice and includes its own controllers, services, entities, and DTOs.
 
 ---
 
 ## ⚙️ Environment Setup
 
-### Create `.env` File
+### Example `.env`
 
 ```env
-# Server
 PORT=3000
-
-# JWT
 JWT_SECRET=your_jwt_secret
 JWT_EXPIRES_IN=3600s
-
-# Database
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=password
-DB_NAME=nestjs_db
+DB_NAME=dagangbareng_db
 ```
 
 ---
 
-## 🚀 Installation Guide
-
-### 1. Clone the Repository
+## 🚀 Getting Started
 
 ```bash
-git clone https://github.com/Ganiramadhan/nestjs-starter.git
-cd nestjs-starter
-```
+git clone https://github.com/Ganiramadhan/dagangbareng-backend.git
+cd dagangbareng-backend
 
-### 2. Install Dependencies
-
-```bash
 yarn install
-```
-
-### 3. Setup Git Hooks (Husky)
-
-```bash
 yarn prepare
 ```
 
-### 4. Run the App (Development Mode)
+Run services in development:
 
 ```bash
 yarn start:auth-api:dev
 yarn start:product-api:dev
+yarn start:order-api:dev
+yarn start:shop-api:dev
 ```
 
-### 5. Access Swagger Documentation
-
-- [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
-
----
-
-## 🔌 Microservices Ready
-
-The project supports **NestJS microservices** (e.g., TCP, Redis, NATS, etc.).  
-Example microservice bootstrap (`main.ts`):
-
-```ts
-async function bootstrap() {
-  const app = await NestFactory.createMicroservice(AppModule, {
-    transport: Transport.TCP,
-    options: {
-      host: '127.0.0.1',
-      port: 8877,
-    },
-  });
-  await app.listen();
-}
-```
+Visit Swagger UI: [http://localhost:3000/api-docs](http://localhost:3000/api-docs)
 
 ---
 
@@ -140,60 +88,38 @@ async function bootstrap() {
 
 | Command                      | Description                        |
 |------------------------------|------------------------------------|
-| `yarn start:auth-api:dev`     | Run `auth-api` in development mode |
-| `yarn start:product-api:dev`  | Run `product-api` in development mode |
-| `yarn start:auth-api:prod`    | Run `auth-api` in production mode  |
-| `yarn start:product-api:prod` | Run `product-api` in production mode |
-| `yarn build`                  | Build for production               |
-| `yarn format`                 | Format code using Prettier         |
-| `yarn lint`                   | Run ESLint                         |
-| `yarn prepare`                | Setup Husky Git hooks              |
+| `yarn start:<service>:dev`   | Run specified service (e.g. `auth-api`) in dev |
+| `yarn build`                 | Compile all apps for production    |
+| `yarn format`                | Format code                        |
+| `yarn lint`                  | Run ESLint                         |
+| `yarn prepare`               | Prepare Git hooks (Husky)          |
 
 ---
 
 ## 📦 Git Hooks
 
-This starter uses **Husky** + **Lint-Staged** to enforce code quality:
-
-- ✅ Auto-format staged files
-- ✅ Prevent committing unformatted code
+Powered by **Husky** and **Lint-Staged**:
 
 ```json
-// package.json
 "lint-staged": {
-    "**/*.ts": ["eslint --fix"]
-  },
+  "**/*.ts": ["eslint --fix"]
+}
 ```
 
 ---
 
-## 📝 Conventional Commit Guidelines
+## 📝 Commit Style (Conventional Commits)
 
-To maintain a standardized commit message format, this project follows the **Conventional Commit** specification. This helps with consistency and automating versioning and changelog generation.
+Examples:
 
-### Commit Types
+- `feat(product): create product listing endpoint`
+- `fix(order): correct total calculation`
+- `docs(readme): improve getting started guide`
 
-Here are the most common types of commit messages:
-
-- **feat**: A new feature.
-- **fix**: A bug fix.
-- **chore**: Routine tasks like dependency updates or build processes.
-- **docs**: Documentation updates.
-- **style**: Code formatting or style changes (no functional changes).
-- **refactor**: Code changes that neither fix bugs nor add features but improve the codebase.
-- **test**: Adding or modifying tests.
-
-### Examples
-
-- `feat(auth): add JWT authentication`
-- `fix(auth): resolve token expiration issue`
-- `docs(readme): update installation guide`
-- `chore(deps): update prisma version`
-
-For more details, please refer to the [Conventional Commits Specification](https://www.conventionalcommits.org/).
+For more, visit [Conventional Commits](https://www.conventionalcommits.org/).
 
 ---
 
 ## 📄 License
 
-MIT © 2025 NestJS Starter
+MIT © 2025 Dagang Bareng
